@@ -1,0 +1,7 @@
+# depslib dependency file v1.0
+1585756370 source:d:\laptrinh\gameboom\main.cpp
+	<iostream>
+	<SDL.h>
+	<SDL_image.h>
+	<string>
+
