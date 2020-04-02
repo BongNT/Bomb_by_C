@@ -22,18 +22,7 @@ struct character{
     const int size=40;
     int speed=1;
     //them 1 ham dat boom
-    void moveRight(){
-        x+=40;
-    }
-    void moveLeft(){
-        x-=40;
-    }
-    void moveUp(){
-        y-=40;
-    }
-    void moveDown(){
-        y+=40;
-    }
+
     void directionCharacter(){
 
     }
@@ -102,7 +91,7 @@ bool loadMedia(){
     if(gKeyPressSurfaces[KEY_PRESS_LEFT] == NULL){
         std::cout<<"Failed to load left image!"<<endl;
     }
-    gKeyPressSurfaces[KEY_PRESS_RIGHT] = loadSurface("Images/bomber_up.png");
+    gKeyPressSurfaces[KEY_PRESS_RIGHT] = loadSurface("Images/bomber_right.png");
     if(gKeyPressSurfaces[KEY_PRESS_RIGHT] == NULL){
         std::cout<<"Failed to load right image!"<<endl;
     }
@@ -123,7 +112,18 @@ void close(){
 	gPNGSurface = NULL;
 }
 
-
+void moveRight(int &x,int &y){
+    x+=40;
+}
+void moveLeft(int &x,int &y){
+    x-=40;
+}
+void moveUp(int &x,int &y){
+    y-=40;
+}
+void moveDown(int &x,int &y){
+    y+=40;
+}
 int main( int argc, char* args[] ){
     if( !init() ){
         std::cout<<"Failed to initialize!"<<endl;
@@ -137,6 +137,11 @@ int main( int argc, char* args[] ){
         {
             SDL_Event e;
             bool quit =false;
+            SDL_Rect boomer;
+                boomer.x=0;
+                boomer.y=0;
+                boomer.h=40;
+                boomer.w=40;
             while(!quit){
                 while( SDL_PollEvent( &e ) != 0 )
                 {
@@ -148,12 +153,14 @@ int main( int argc, char* args[] ){
                             case SDLK_UP :
                             {
                                 gCurrentSurface=gKeyPressSurfaces[KEY_PRESS_UP];
+                                moveUp(boomer.x,boomer.y);
                                 break;
 
                             }
                             case SDLK_DOWN :
                             {
                                 gCurrentSurface=gKeyPressSurfaces[KEY_PRESS_DOWN];
+                                moveDown(boomer.x,boomer.y);
                                 break;
                             }
                             case SDLK_LEFT :
@@ -180,7 +187,8 @@ int main( int argc, char* args[] ){
                     }
                 }
 
-                SDL_BlitSurface( gCurrentSurface, NULL, gScreenSurface, NULL );
+
+                SDL_BlitSurface( gCurrentSurface, NULL, gScreenSurface, &boomer );
 
 				SDL_UpdateWindowSurface( gWindow );
 
