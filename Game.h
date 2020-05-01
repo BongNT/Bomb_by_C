@@ -9,19 +9,32 @@
 class Game
 {
 public:
+	bool playAgain=true;
+	bool playing = true;
+	bool exiting = false;
+	bool showMenu = true;
 	Game();
 	~Game();
 	static SDL_Renderer* renderer ;
-	void autoDisplay();
+	
 	void init(const char* title, int width, int height);
+	void initGame();
+
+	void initMenu();
+	void updateMenu();
+	void handleMenu();
+
 	bool running() { return isRunning; }
+	void autoDisplay();
 	void handleEvents();
+
 	void update();
 	void render();
 	void clean();
-	
+	void outgame();
 
 private:
+	
 	bool isRunning = false;
 	int frame = 0;
 	SDL_Window* window=NULL;

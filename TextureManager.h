@@ -9,4 +9,12 @@ public:
 
 };
 
+//ham su li va cham
+namespace CommonFuction
+{
+	bool collision(const SDL_Rect& rec1, const SDL_Rect& rec2);
+	bool checkMouse(const int& x, const int& y,const SDL_Rect& rec);
+
+}
+
 #endif

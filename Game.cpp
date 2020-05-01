@@ -4,13 +4,47 @@
 #include"Object.h"
 #include"Bomb.h"
 #include"Flame.h"
+#include<vector>
 
 SDL_Renderer* Game::renderer = NULL;
+
 SDL_Texture* backGroundText = NULL;
+SDL_Texture* playButton=NULL;
+SDL_Texture* exitButton=NULL;
+int xmouse = 0;
+int ymouse = 0;
+SDL_Rect playRec;
+SDL_Rect exitRec;
+
 Object* player = NULL;
-Bomb* bomb=NULL;
-Flame* bombBang = NULL;
-Object* monster = NULL;
+std::vector<Object*>listMonster;
+std::vector<Bomb*>listBomb;
+std::vector<Flame*>listFlame;
+void MakeListMonster() {
+	
+	int numberMonster = 5;
+	Object* tempMonster = new Object[numberMonster];
+	for (int i = 0; i < numberMonster; i++) {
+		Object* pMonster = (tempMonster + i);
+		pMonster->CreateObj("Images/monster_right.png", 0, 150 * (i), 45, 65);
+		if (pMonster == NULL)std::cout << "xx";
+		listMonster.push_back(pMonster);
+	}
+	
+}
+void MakeListBomb() {
+	int numberBomb = 3;
+	Flame* tempFlame = new Flame[numberBomb];
+	Bomb* tempBomb = new Bomb[numberBomb];
+	for (int i = 0; i < numberBomb; i++) {
+		Bomb* pBomb = (tempBomb + i);
+		listBomb.push_back(pBomb);
+		Flame* pFlame = (tempFlame + i);
+		listFlame.push_back(pFlame);
+	}
+}
+
+
 Game::Game()
 {}
 
@@ -42,10 +76,6 @@ void Game::init(const char* title, int width, int height)
 			{
 				SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); //trang
 				
-				backGroundText = TextureManager::LoadTexture("Images/background_Play.png");
-				player = new Object( "Images/bomber_down.png", 0, 0, 45, 65);
-				monster = new Object("Images/monster_right.png", 45, 45, 45, 65);
-				
 			}
 
 			isRunning = true;
@@ -53,14 +83,123 @@ void Game::init(const char* title, int width, int height)
 	}
 }
 
+void Game::initGame()
+{	
+	if (backGroundText != NULL)SDL_DestroyTexture(backGroundText);
+	backGroundText = TextureManager::LoadTexture("Images/background_Play.png");
+	player = new Object();
+	player->CreateObj("Images/bomber_down.png", 200, 205, 45, 65);
+	player->Object::objSetSpeed(15);
+	isRunning = true;
+
+	MakeListMonster();
+	MakeListBomb();
+}
+void Game::initMenu() {
+	if (backGroundText != NULL)SDL_DestroyTexture(backGroundText);
+	backGroundText = TextureManager::LoadTexture("Images/background_Menu.png");
+	if (playButton != NULL)SDL_DestroyTexture(playButton);
+	playButton = TextureManager::LoadTexture("Images/Play.png");
+	if (exitButton != NULL)SDL_DestroyTexture(exitButton);
+	exitButton= TextureManager::LoadTexture("Images/Exit.png");
+	playRec = { 500,250,200,55 };
+	exitRec = { 500,350,200,55 };
+	exiting = false;
+}
+
+void Game::updateMenu()
+{
+	SDL_RenderClear(renderer);
+	SDL_RenderCopy(renderer, backGroundText, NULL, NULL);
+	SDL_RenderCopy(renderer, playButton, NULL, &playRec);
+	SDL_RenderCopy(renderer, exitButton, NULL, &exitRec);
+	SDL_RenderPresent(renderer);
+}
+
+void Game::handleMenu()
+{
+	SDL_Event menuEvent;
+	while (SDL_PollEvent(&menuEvent) != 0) {
+
+		switch (menuEvent.type)
+		{
+		case SDL_QUIT:
+		{
+			
+			showMenu = false;
+			break;
+		}
+		case SDL_MOUSEMOTION:
+		{
+			xmouse = menuEvent.motion.x;
+			ymouse = menuEvent.motion.y;
+			if (CommonFuction::checkMouse(xmouse, ymouse, playRec)) {
+				SDL_DestroyTexture(playButton);
+				playButton = TextureManager::LoadTexture("Images/Play2.png");
+			}
+			else {
+				SDL_DestroyTexture(playButton);
+				playButton = TextureManager::LoadTexture("Images/Play.png");
+			}
+			if (CommonFuction::checkMouse(xmouse, ymouse, exitRec)) {
+				SDL_DestroyTexture(exitButton);
+				exitButton = TextureManager::LoadTexture("Images/Exit2.png");
+			}
+			else {
+				SDL_DestroyTexture(exitButton);
+				exitButton = TextureManager::LoadTexture("Images/Exit.png");
+			}
+			break;
+		}
+		case SDL_MOUSEBUTTONDOWN:
+		{
+			xmouse = menuEvent.motion.x;
+			ymouse = menuEvent.motion.y;
+
+			if (CommonFuction::checkMouse(xmouse, ymouse, playRec)) {
+				SDL_DestroyTexture(playButton);
+				playButton = TextureManager::LoadTexture("Images/Play2.png");
+				exiting = false;
+				showMenu = false;
+				
+			}
+			if (CommonFuction::checkMouse(xmouse, ymouse, exitRec)) {
+				SDL_DestroyTexture(exitButton);
+				exitButton = TextureManager::LoadTexture("Images/Exit2.png");
+				showMenu = false;
+				exiting = true;
+			}
+
+		}
+		default:
+			break;
+		}
+	}
+
+}
+
 void Game::autoDisplay() {
-	monster->Object::AutoMove();
+
+	for (int i = 0; i < listMonster.size(); i++) {
+		if (listMonster[i]->Object::canMove) {
+			listMonster[i]->AutoMove();
+		}
+		for (int j = 0; j < listBomb.size(); j++) {
+			if (listBomb[j]->set==true && listMonster[i] != NULL){
+				listMonster[i]->Object::AutoChangeDirection(listBomb[j]->dst);
+
+			}
+		}
+		
+	}
+	
+
 }
 void Game::handleEvents()
 {
 	SDL_Event event;
 
-	while (SDL_PollEvent(&event) != 0) 
+ 	while (SDL_PollEvent(&event) != 0) 
 	{
 
 		if (event.type == SDL_QUIT)
@@ -99,24 +238,30 @@ void Game::handleEvents()
 				case SDLK_SPACE:
 				{	
 					//xu li bomb,flame
-					if (bomb == NULL) {
-						bomb = new Bomb();
-						bombBang = new Flame();
-					}
-					if (bomb != NULL) {
-						bomb->Bomb::BombSetPosition(player->xval, (player->yval) + 20);
-						bombBang->Flame::Setposition(player->xval, (player->yval) + 20);
-						bomb->Bomb::ResetTime();
-						bombBang->Flame::ResetTime();
-					}
+					
+					
+					for (int i = 0; i < listBomb.size(); i++) {
+						
+						if (listBomb[i]->set == false && listFlame[i]->set == false) {
+							
+							listBomb[i]->ResetTime();
+							listFlame[i]->ResetTime();
+							listBomb[i]->BombSetPosition(player->xval, (player->yval) + 20);
+							listFlame[i]->Setposition(player->xval, (player->yval) + 20);
+							listBomb[i]->set = true;
+							listFlame[i]->set = true;
+							break;
 
+						}
+						
+					}
 					break;
 				}
 			}
 		}
 	}
 
-	switch (event.type)
+	/*switch (event.type)
 	{
 	case SDL_QUIT:
 		isRunning = false;
@@ -124,12 +269,35 @@ void Game::handleEvents()
 
 	default:
 		break;
-	}
+	}*/
 }
 
 void Game::update()
-{	
-	monster->objSetPosition();
+{	//player chet
+	if (player->canMove == false) {
+		player->LoadObjDeath("Images/bomber_dead.png");
+		player->ShowDeath();
+	}
+	//monster va cham vs player
+	for (int i = 0; i < listMonster.size(); i++) {
+		listMonster[i]->objSetPosition();
+		if (CommonFuction::collision(player->dst, listMonster[i]->dst)) {
+			//std::cout << "p vs m";
+			//clean();
+			playAgain = true;
+		}
+	}
+	//monster chet
+	for (int i = 0; i < listMonster.size(); i++) {
+		if (listMonster[i]->canMove == false) {
+			listMonster[i]->LoadObjDeath("Images/ghost.png");
+			listMonster[i]->ShowDeath();
+		}
+		if (listMonster[i]->death) {
+			listMonster[i]->free();
+			listMonster.erase(listMonster.begin() + i);
+		}
+	}
 	player->objSetPosition();
 	frame++;
 	//std::cout << frame << std::endl;
@@ -140,25 +308,82 @@ void Game::render()			//xep chong hinh anh duoi cung hien ra tren cung
 	
 	SDL_RenderClear(renderer);								
 	SDL_RenderCopy(renderer, backGroundText, NULL, NULL);
+	//in ra monster
+	for (int i = 0; i < listMonster.size(); i++) {
+		listMonster[i]->objRender();
+	}
+	//in ra bomb va flame
+	for (int j = 0; j < listBomb.size(); j++) {
+		if (listBomb[j]->set==true) {
+			listBomb[j]->Bomb::Update();
+			listBomb[j]->Render();
+			if (listBomb[j]->Bomb::Exploded()) 
+			{//xu li bomb no
+				listFlame[j]->Flame::Update();
+				if (listFlame[j]->timeExist <= 0) {
+					listBomb[j]->set = false;
+					listFlame[j]->set = false;
+				}
+				//bomb vs monster
+				for (int i = 0; i < listMonster.size(); i++) {
+					if (listFlame[j]->Flame::isShowing && listFlame[j]->Flame::DestroyObj(listMonster[i]->dst)) {//va cham bomb va chet
+						
+						listMonster[i]->canMove = false;
+						
 
-	monster->objRender();
-	if (bomb != NULL) {
-		bomb->Bomb::Update();
-		if (bomb->Bomb::Exploded()) {
-			bombBang->Flame::Update();
+					}
+				}
+				//flame vs bomb
+				for (int i = j+1; i < listBomb.size(); i++) {
+					if (listFlame[j]->Flame::isShowing && listFlame[j]->DestroyObj(listBomb[i]->dst)) {
+						listBomb[i]->BombExplode();
+						
+					}
+				}
+				//bomb vs player
+				if (listFlame[j]->Flame::isShowing && listFlame[j]->Flame::DestroyObj(player->dst)) {
+					player->canMove = false;
+					if (player->death == true) {
+						Game::isRunning = false;
+						playAgain = true;
+						//showMenu = true;
+						break;
+						
+					}
+				}
 
+			}
 		}
+	}
+	if (listMonster.size() == 0) {//win
+		//showMenu = true;
+		playAgain = true;
 	}
 	player->objRender();
 
 	SDL_RenderPresent(renderer);
+	
 }
 
 void Game::clean()
 {
+	for (int i = 0; i < listBomb.size(); i++) {
+		listBomb[i]->free();
+		listFlame[i]->free();
+		
+	}
+	for (int i = 0; i < listMonster.size(); i++) {
+		listMonster[i]->free();
+		//std::cout << "\n" << listBomb.size();
+	}
+	listBomb.clear();
+	listFlame.clear();
+	listMonster.clear();
 	delete player;
-	delete bombBang;
-	delete bomb;
+	
+	
+}
+void Game::outgame() {
 	SDL_DestroyWindow(window);
 	SDL_DestroyRenderer(renderer);
 	SDL_Quit();

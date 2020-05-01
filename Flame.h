@@ -6,18 +6,23 @@
 class Flame {
 
 public:
-	
+	bool set ;
+	int timeExist = 20;
 	Flame();
 	~Flame();
+	bool isShowing = false;
 	void ResetTime();
+	bool DestroyObj(const SDL_Rect& rec1);
 	void Update();
 	void Render();
 	void Setposition(int x, int y);
-	void returnTimeExist();
+	void free();
+	//void returnTimeExist();
 private:
 	int bombLength = 1;
-	int timeExist = 20;
+	
 	SDL_Rect dst0;
+	int xval, yval;
 	enum direction
 	{
 	FLAME_DEFAULT,

@@ -8,26 +8,30 @@ class Bomb {
 public:
     /*int xval;
     int yval;*/
-    
+    int timeToExplode;
+    SDL_Rect dst;
+    bool set ;
     Bomb();
     ~Bomb();
     void BombSetPosition(int x, int y);
     void ResetTime();
     void Update();
-    void Render(/*int x, int y*/);
+    void Render();
     bool Exploded() {
         return checkExplode;
-        //else return false;
+        //no thi true, chua no thi false
     };
+    void BombExplode();
+    void free();
 
 
 private:
-    int timeToExplode = 120;
+    
     bool checkExplode = false;
     
     SDL_Texture* bombTexture = NULL;
-    SDL_Rect dst;
-    SDL_Rect src={ 0,0,45,45 };
+    
+    //SDL_Rect src={ 0,0,45,45 };
 
 };
 
