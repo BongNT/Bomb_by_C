@@ -6,8 +6,7 @@
 class Bomb {
 
 public:
-    /*int xval;
-    int yval;*/
+    
     int timeToExplode;
     SDL_Rect dst;
     bool set ;
@@ -31,7 +30,7 @@ private:
     
     SDL_Texture* bombTexture = NULL;
     
-    //SDL_Rect src={ 0,0,45,45 };
+    
 
 };
 

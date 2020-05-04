@@ -1,8 +1,8 @@
 #include "Game.h"
 #include "TextureManager.h"
 
-const int SCREEN_WIDTH = 905;//15*45
-const int SCREEN_HEIGHT = 679;//6*(45+65)+65
+const int SCREEN_WIDTH = 900;
+const int SCREEN_HEIGHT = 672;
 const int fps = 60;
 const int framedelay = 1000 / fps;
 
@@ -25,10 +25,11 @@ int main(int argc, char* argv[])
 
 		if (game->exiting == false)
 		{
-			std::cout << "x";
+			
 			game->initGame();
 			int frameStart;
 			int frametime;
+			
 			while (game->running())
 			{
 				frameStart = SDL_GetTicks();
@@ -38,13 +39,15 @@ int main(int argc, char* argv[])
 				game->update();
 				game->render();
 
+				if(game->win != 0)game->showLoseOrWin();
 				frametime = SDL_GetTicks() - frameStart;//miliseconds
 				if (framedelay - frametime > 0) {
 					SDL_Delay(framedelay - frametime);
 				}
 			}
-			game->clean();
 			
+			
+			game->clean();
 		}
 	}
 	

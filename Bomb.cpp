@@ -18,13 +18,11 @@ Bomb::Bomb() {
 void Bomb::BombSetPosition(int x, int y) {
 	dst.x = x;
 	dst.y = y;
-	/*dst.w = 45;
-	dst.h = 45;*/
+	
 }
 void Bomb::ResetTime() {
 	timeToExplode = time;
-	/*dst.w = 0;
-	dst.h = 0;*/
+	
 }
 void Bomb::BombExplode() {
 	timeToExplode = 0;
@@ -38,7 +36,7 @@ void Bomb::Update( ) {
 		if (timeToExplode == time)checkExplode = false;
 		dst.w = 45;
 		dst.h = 45;
-		//Bomb::Render();
+		
 		timeToExplode--;
 		
 	}

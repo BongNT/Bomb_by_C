@@ -27,7 +27,6 @@ void MakeListMonster() {
 	for (int i = 0; i < numberMonster; i++) {
 		Object* pMonster = (tempMonster + i);
 		pMonster->CreateObj("Images/monster_right.png", 0, 150 * (i), 45, 65);
-		if (pMonster == NULL)std::cout << "xx";
 		listMonster.push_back(pMonster);
 	}
 	
@@ -74,10 +73,10 @@ void Game::init(const char* title, int width, int height)
 			}
 			else
 			{
-				SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); //trang
+				SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); 
 				
 			}
-
+			
 			isRunning = true;
 		}
 	}
@@ -88,9 +87,11 @@ void Game::initGame()
 	if (backGroundText != NULL)SDL_DestroyTexture(backGroundText);
 	backGroundText = TextureManager::LoadTexture("Images/background_Play.png");
 	player = new Object();
-	player->CreateObj("Images/bomber_down.png", 200, 205, 45, 65);
+	player->CreateObj("Images/bomber_down.png", 450, 205, 45, 65);
 	player->Object::objSetSpeed(15);
 	isRunning = true;
+	timeShowResult = 120;
+	win = 0;
 
 	MakeListMonster();
 	MakeListBomb();
@@ -125,8 +126,10 @@ void Game::handleMenu()
 		{
 		case SDL_QUIT:
 		{
-			
+			isRunning = false;
+			playAgain = false;
 			showMenu = false;
+			exiting = true;
 			break;
 		}
 		case SDL_MOUSEMOTION:
@@ -161,13 +164,13 @@ void Game::handleMenu()
 				playButton = TextureManager::LoadTexture("Images/Play2.png");
 				exiting = false;
 				showMenu = false;
-				
 			}
 			if (CommonFuction::checkMouse(xmouse, ymouse, exitRec)) {
 				SDL_DestroyTexture(exitButton);
 				exitButton = TextureManager::LoadTexture("Images/Exit2.png");
 				showMenu = false;
 				exiting = true;
+				
 			}
 
 		}
@@ -205,6 +208,11 @@ void Game::handleEvents()
 		if (event.type == SDL_QUIT)
 		{
 			isRunning = false;
+			playAgain = false;
+			showMenu = false;
+			exiting = true;
+			
+
 			break;
 		}
 		else if(event.type == SDL_KEYDOWN )
@@ -261,15 +269,7 @@ void Game::handleEvents()
 		}
 	}
 
-	/*switch (event.type)
-	{
-	case SDL_QUIT:
-		isRunning = false;
-		break;
-
-	default:
-		break;
-	}*/
+	
 }
 
 void Game::update()
@@ -277,14 +277,14 @@ void Game::update()
 	if (player->canMove == false) {
 		player->LoadObjDeath("Images/bomber_dead.png");
 		player->ShowDeath();
+		win = -1;
 	}
 	//monster va cham vs player
 	for (int i = 0; i < listMonster.size(); i++) {
 		listMonster[i]->objSetPosition();
 		if (CommonFuction::collision(player->dst, listMonster[i]->dst)) {
-			//std::cout << "p vs m";
-			//clean();
-			playAgain = true;
+			win = -1;
+			
 		}
 	}
 	//monster chet
@@ -327,26 +327,21 @@ void Game::render()			//xep chong hinh anh duoi cung hien ra tren cung
 				//bomb vs monster
 				for (int i = 0; i < listMonster.size(); i++) {
 					if (listFlame[j]->Flame::isShowing && listFlame[j]->Flame::DestroyObj(listMonster[i]->dst)) {//va cham bomb va chet
-						
 						listMonster[i]->canMove = false;
-						
-
 					}
 				}
 				//flame vs bomb
 				for (int i = j+1; i < listBomb.size(); i++) {
 					if (listFlame[j]->Flame::isShowing && listFlame[j]->DestroyObj(listBomb[i]->dst)) {
 						listBomb[i]->BombExplode();
-						
 					}
 				}
 				//bomb vs player
 				if (listFlame[j]->Flame::isShowing && listFlame[j]->Flame::DestroyObj(player->dst)) {
 					player->canMove = false;
 					if (player->death == true) {
-						Game::isRunning = false;
-						playAgain = true;
-						//showMenu = true;
+						win = -1;
+						
 						break;
 						
 					}
@@ -355,9 +350,10 @@ void Game::render()			//xep chong hinh anh duoi cung hien ra tren cung
 			}
 		}
 	}
-	if (listMonster.size() == 0) {//win
-		//showMenu = true;
-		playAgain = true;
+	//win
+	if (listMonster.size() == 0) {
+		
+		win = 1;
 	}
 	player->objRender();
 
@@ -374,7 +370,7 @@ void Game::clean()
 	}
 	for (int i = 0; i < listMonster.size(); i++) {
 		listMonster[i]->free();
-		//std::cout << "\n" << listBomb.size();
+		
 	}
 	listBomb.clear();
 	listFlame.clear();
@@ -387,4 +383,29 @@ void Game::outgame() {
 	SDL_DestroyWindow(window);
 	SDL_DestroyRenderer(renderer);
 	SDL_Quit();
+}
+
+void Game::showLoseOrWin()
+{
+	
+	if (win == -1) {
+		SDL_DestroyTexture(backGroundText);
+		backGroundText = TextureManager::LoadTexture("Images/lose.png");
+		win = 2;
+		if (timeShowResult > 0)timeShowResult--;
+		else {
+			isRunning = false;
+			playAgain = true;
+		}
+	}
+	else if(win == 1){
+		SDL_DestroyTexture(backGroundText);
+		backGroundText = TextureManager::LoadTexture("Images/win.png");
+		win = 2;
+	}
+	if (timeShowResult > 0)timeShowResult--;
+	else {
+		isRunning = false;
+		playAgain = true;
+	}
 }

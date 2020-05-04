@@ -1,8 +1,8 @@
 #include "Object.h"
 #include"TextureManager.h"
 
-const int SCREEN_WIDTH = 675;
-const int SCREEN_HEIGHT = 725;
+const int SCREEN_WIDTH = 900;
+const int SCREEN_HEIGHT = 672;
 
 Object::Object() {
 	direction = 4;
@@ -12,6 +12,7 @@ Object::Object() {
 	dst = { 0,0,0,0 };
 }
 Object::~Object(){
+	free();
 }
 void Object::free()
 {
@@ -22,6 +23,8 @@ void Object::CreateObj(const char* somename, int x, int y, int w, int h) {
 	objTexture = TextureManager::LoadTexture(somename);
 	xval = x;
 	yval = y;
+	dst.x = x;
+	dst.y = y;
 	dst.w = w;
 	dst.h = h;
 }

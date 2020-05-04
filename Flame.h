@@ -17,7 +17,7 @@ public:
 	void Render();
 	void Setposition(int x, int y);
 	void free();
-	//void returnTimeExist();
+	
 private:
 	int bombLength = 1;
 	

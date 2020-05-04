@@ -18,8 +18,7 @@ Flame::~Flame() {
 }
 void Flame::ResetTime() {
 	timeExist=20;
-	/*dst0.w = 0;
-	dst0.h = 0;*/
+	
 }
 void Flame::Setposition(int x, int y) {
 	dst0.x = x - 45;
@@ -42,16 +41,16 @@ void Flame::Update() {
 		isShowing = true;
 		Flame::Render();
 		timeExist--;
-		std::cout << timeExist;
-		//std::cout << "X"<<timeExist;
+		//std::cout << timeExist;
+		
 	}
-	else {		//bien mat
+	else {		
+		//bien mat
 		dst0.w = 0;
 		dst0.h = 0;
 		isShowing = false;
 		
-		//timeExist = 20;
-		//std::cout << "Y";
+		
 	}
 }
 void Flame::Render() {

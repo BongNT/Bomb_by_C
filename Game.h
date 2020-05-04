@@ -9,6 +9,7 @@
 class Game
 {
 public:
+	int win;//0=game dang chay; 1=win; -1=lose;
 	bool playAgain=true;
 	bool playing = true;
 	bool exiting = false;
@@ -32,11 +33,13 @@ public:
 	void render();
 	void clean();
 	void outgame();
+	void showLoseOrWin();
 
 private:
 	
 	bool isRunning = false;
 	int frame = 0;
+	int timeShowResult ;
 	SDL_Window* window=NULL;
 	
 };
