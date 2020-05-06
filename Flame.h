@@ -26,10 +26,10 @@ private:
 	enum direction
 	{
 	FLAME_DEFAULT,
-	FLAME_UP,
+	/*FLAME_UP,
 	FLAME_DOWN,
 	FLAME_LEFT,
-	FLAME_RIGHT,
+	FLAME_RIGHT,*/
 	FLAME_TOTAL,
 	};
 	SDL_Texture* flameTexture[FLAME_TOTAL];

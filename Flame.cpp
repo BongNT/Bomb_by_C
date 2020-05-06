@@ -6,10 +6,10 @@ Flame::Flame() {
 	flameTexture[FLAME_DEFAULT] = TextureManager::LoadTexture("Images/bombbang.png");
 	dst0.w = 135;
 	dst0.h = 135;
-	flameTexture[FLAME_UP] = TextureManager::LoadTexture("Images/bombbang_up_1.png");
+	/*flameTexture[FLAME_UP] = TextureManager::LoadTexture("Images/bombbang_up_1.png");
 	flameTexture[FLAME_DOWN] = TextureManager::LoadTexture("Images/bombbang_down_1.png");
 	flameTexture[FLAME_LEFT] = TextureManager::LoadTexture("Images/bombbang_left_1.png");
-	flameTexture[FLAME_RIGHT] = TextureManager::LoadTexture("Images/bombbang_right_1.png");
+	flameTexture[FLAME_RIGHT] = TextureManager::LoadTexture("Images/bombbang_right_1.png");*/
 	xval = 0;
 	yval = 0;
 	set = false;
