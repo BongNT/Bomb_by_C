@@ -8,7 +8,7 @@ class Object{
 
 public:
 	bool death = false;
-	bool canMove = true;
+	bool canMove = true;//bien cho monster
 	int timeToDeath = 15;
 	int xval = 0;//gia tri toa do hien tai
 	int yval = 0;
@@ -37,7 +37,6 @@ public:
 
 private:
 	SDL_Texture* objTexture = NULL;
-	
 	int speed;
 	int direction;//1=up,2=down.3=left,4=right
 };

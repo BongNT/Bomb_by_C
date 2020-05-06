@@ -2,12 +2,11 @@
 #define TEXTUREMANAGER_H_
 #include "Game.h"
 
-class TextureManager {
+namespace TextureManager 
+{
+	 SDL_Texture* LoadTexture( const char* name);
 
-public:
-	static SDL_Texture* LoadTexture( const char* name);
-
-};
+}
 
 //ham su li va cham
 namespace CommonFuction

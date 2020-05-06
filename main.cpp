@@ -12,23 +12,28 @@ int main(int argc, char* argv[])
 	game = new Game();
 	game->init(" BOOM! By Nguyen Thanh Bong ", SCREEN_WIDTH, SCREEN_HEIGHT);
 	
-	
+	int frameStart;
+	int frametime;
 	while (game->playAgain) {
+
 		game->playAgain = false;
 		game->showMenu = true;
 		game->initMenu();
 		while (game->showMenu) {
+			frameStart = SDL_GetTicks();
 			game->updateMenu();
 			game->handleMenu();
-
+			frametime = SDL_GetTicks() - frameStart;//miliseconds
+			if (framedelay - frametime > 0) {
+				SDL_Delay(framedelay - frametime);
+			}
 		}
 
 		if (game->exiting == false)
 		{
 			
 			game->initGame();
-			int frameStart;
-			int frametime;
+			
 			
 			while (game->running())
 			{

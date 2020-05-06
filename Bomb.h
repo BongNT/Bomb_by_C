@@ -10,8 +10,10 @@ public:
     int timeToExplode;
     SDL_Rect dst;
     bool set ;
+
     Bomb();
     ~Bomb();
+
     void BombSetPosition(int x, int y);
     void ResetTime();
     void Update();

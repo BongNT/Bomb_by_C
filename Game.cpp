@@ -45,7 +45,10 @@ void MakeListBomb() {
 
 
 Game::Game()
-{}
+{	
+	win = 0;
+	timeShowResult = 120;
+}
 
 Game::~Game()
 {}
@@ -88,7 +91,7 @@ void Game::initGame()
 	backGroundText = TextureManager::LoadTexture("Images/background_Play.png");
 	player = new Object();
 	player->CreateObj("Images/bomber_down.png", 450, 205, 45, 65);
-	player->Object::objSetSpeed(15);
+	player->Object::objSetSpeed(20);
 	isRunning = true;
 	timeShowResult = 120;
 	win = 0;
@@ -350,7 +353,7 @@ void Game::render()			//xep chong hinh anh duoi cung hien ra tren cung
 			}
 		}
 	}
-	//win
+	//win(tieu diet het quai vat
 	if (listMonster.size() == 0) {
 		
 		win = 1;
